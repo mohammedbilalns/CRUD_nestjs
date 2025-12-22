@@ -1,0 +1,23 @@
+layout {
+  pane split_direction="horizontal" {
+    pane {
+      name "dev-server"
+      command "pnpm"
+      args "start:dev"
+    }
+
+    pane {
+      name "docker"
+      command "sh"
+      args "-c" "
+        if docker compose ps --status running | grep -q .; then
+          echo 'Docker containers already running'
+        else
+          echo 'Starting docker containers...'
+          docker compose up -d
+        fi
+        exec $SHELL
+      "
+    }
+  }
+}
