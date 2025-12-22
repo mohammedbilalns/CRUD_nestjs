@@ -41,6 +41,28 @@ export class AuthService {
 
   }
 
+  public async refreshToken(refreshToken: string){
+    try{
+      const payload = this.JwtService.verify(refreshToken, {
+        secret:'refresh secret'
+      })
+
+      const user = await this.userRepository.findOne({
+        where: {id: payload.sub}
+      })
+
+      if(!user){
+        throw new UnauthorizedException('Invalid token')
+      }
+      const accessToken = this.generateAccessToken(user)
+
+      return {accessToken}
+
+    }catch(e){
+      throw new UnauthorizedException('Invalid token')
+    }
+  }
+
   private async  handleRegistration(registerDto: RegisterDto, role: UserRole){
     const existingUser = await this.userRepository.findOne({
       where: {email: registerDto.email}
