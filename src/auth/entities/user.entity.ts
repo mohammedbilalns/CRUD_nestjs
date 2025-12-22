@@ -1,5 +1,5 @@
 import { Post } from "src/posts/entities/post.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum UserRole {
@@ -10,7 +10,7 @@ export enum UserRole {
 @Entity()
 export class User{
 
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number
 
   @Column({unique: true})

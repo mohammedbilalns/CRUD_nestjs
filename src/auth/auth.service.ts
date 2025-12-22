@@ -17,11 +17,11 @@ export class AuthService {
   ) {}
 
   public async register(registerDto: RegisterDto){
-    this.handleRegistration(registerDto, UserRole.USER)
+    return this.handleRegistration(registerDto, UserRole.USER)
   }
 
   public async registerAdmin(registerDto: RegisterDto){
-    this.handleRegistration(registerDto, UserRole.ADMIN)
+    return this.handleRegistration(registerDto, UserRole.ADMIN)
   }
 
   public async login(loginDto: LoginDto){
