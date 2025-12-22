@@ -1,0 +1,2 @@
+name: 'fetch single post '
+url: http://localhost:3000/posts/1

@@ -1,0 +1,5 @@
+name: 'fetch all posts '
+url: http://localhost:3000/posts
+headers:
+- name: content-type
+  value: application/json

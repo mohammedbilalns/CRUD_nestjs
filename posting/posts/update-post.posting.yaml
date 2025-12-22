@@ -1,0 +1,12 @@
+name: 'update post '
+method: PUT
+url: http://localhost:3000/posts/2
+body:
+  content: |-
+    {
+      "title":"edited seond post"
+    }
+  content_type: application/json
+headers:
+- name: content-type
+  value: application/json

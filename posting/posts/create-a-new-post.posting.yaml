@@ -1,0 +1,14 @@
+name: 'create a new post '
+method: POST
+url: http://localhost:3000/posts
+body:
+  content: |-
+    {
+      "title":"second post",
+      "content":"second post content",
+      "authorName":"bob"
+    }
+  content_type: application/json
+headers:
+- name: content-type
+  value: application/json
