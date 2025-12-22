@@ -22,7 +22,7 @@ export class PostsService {
   }
 
   async findOne(postId: number) : Promise<Post> {
-    const post = await this.postRepository.findOneBy({})
+    const post = await this.postRepository.findOneBy({id: postId})
     if(!post) throw new NotFoundException(`Post with ID ${postId} not found  `)
     return post 
   }
@@ -35,8 +35,7 @@ export class PostsService {
     }) 
 
 
-    this.postRepository.save(newPost)
-    return newPost
+    return await this.postRepository.save(newPost)
   }
 
   async update(id: number , updatePostData: UpdatePostDto): Promise<Post> {

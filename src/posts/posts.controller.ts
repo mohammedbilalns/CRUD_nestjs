@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -30,12 +30,12 @@ export class PostsController {
     return this.postService.create(createPostData)
   }
 
-  @Put()
+  @Put(':id')
   async update(@Param('id', ParseIntPipe, PostExistsPipe) id :  number, @Body() updatePostData : UpdatePostDto): Promise<PostEntity>{
     return this.postService.update(id, updatePostData)
   }
 
-  @Put(":id")
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseIntPipe, PostExistsPipe) id: number) : Promise<void> {
     this.postService.remove(id)
