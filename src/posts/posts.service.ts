@@ -1,12 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { User, UserRole } from 'src/auth/entities/user.entity';
 
 
-@Injectable()
+@Injectable() 
 export class PostsService {
 
   constructor(
@@ -17,30 +18,40 @@ export class PostsService {
 
 
   async findAll(): Promise<Post[]>{
-    return this.postRepository.find()
+    return this.postRepository.find({
+      relations: ['authorName']
+    })
 
   }
 
   async findOne(postId: number) : Promise<Post> {
-    const post = await this.postRepository.findOneBy({id: postId})
+    const post = await this.postRepository.findOne({
+      where: {id: postId},
+      relations: ['authorName']
+    })
+
     if(!post) throw new NotFoundException(`Post with ID ${postId} not found  `)
     return post 
   }
 
-  async create(createPostData : CreatePostDto) :  Promise<Post> {
+  async create(createPostData : CreatePostDto, authorName: User) :  Promise<Post> {
     const newPost : Post = this.postRepository.create({
       title: createPostData.title,
       content: createPostData.content,
-      authorName: createPostData.authorName,
+      authorName,
     }) 
 
 
     return await this.postRepository.save(newPost)
   }
 
-  async update(id: number , updatePostData: UpdatePostDto): Promise<Post> {
+  async update(id: number , updatePostData: UpdatePostDto, user: User): Promise<Post> {
 
     const existingPost = await this.postRepository.findOne({where: {id}})
+
+    if(existingPost?.authorName.id !==  user.id && user.role !== UserRole.ADMIN ){
+      throw new ForbiddenException('You are not authorized to update this post')
+    }
 
     if(!existingPost) throw new NotFoundException(`Post with id ${id} is not found`)
 
@@ -51,11 +62,6 @@ export class PostsService {
     if(updatePostData.content){
       existingPost.content = updatePostData.content
     }
-
-    if(updatePostData.authorName){
-      existingPost.authorName = updatePostData.authorName
-    }
-
     return this.postRepository.save(existingPost)
 
   }
