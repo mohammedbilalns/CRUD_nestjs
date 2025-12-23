@@ -25,7 +25,9 @@ export class AuthService {
   }
 
   public async login(loginDto: LoginDto){
-    const user = await this.userRepository.findOne({})
+    const user = await this.userRepository.findOne({
+      where: {email: loginDto.email}
+    })
 
     if(!user || !(await this.verifyPassword(loginDto.password, user.password))){
       throw new UnauthorizedException('Invalid credentials')
@@ -88,6 +90,18 @@ export class AuthService {
     }
   }
 
+  public async getUserById(userId: number){
+    const user = await this.userRepository.findOne({
+      where: {id: userId}
+    })
+
+    if(!user){
+      throw new UnauthorizedException('Invalid credentials')
+    } 
+    const {password, ...result} = user
+    return result
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10)
   }
@@ -111,7 +125,7 @@ export class AuthService {
     }
 
     return this.JwtService.sign(payload, {
-      secret:'super secure secret',
+      secret:'jwt_secret',
       expiresIn: '15m'
     })
 
@@ -121,7 +135,7 @@ export class AuthService {
     const payload = {sub: user.id}
 
     return this.JwtService.sign(payload, {
-      secret: 'refresh secret',
+      secret: 'jwt_secret',
       expiresIn: "7d" 
     })
 
